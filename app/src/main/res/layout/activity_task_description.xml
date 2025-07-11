@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".TaskDescription">
+
+    <!-- Title Bar -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/taskdescriptioncontainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        android:backgroundTint="@color/modern_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/modern_primary"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="20dp">
+
+            <ImageButton
+                android:id="@+id/backiconbutton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/backicon"
+                android:contentDescription="Go Back"
+                app:tint="@android:color/white" />
+
+            <TextView
+                android:id="@+id/tasdescriptionview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Task Details"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
+        </RelativeLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/taskdescriptioncontainer"
+        app:layout_constraintBottom_toTopOf="@id/savetaskbutton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+    <!-- Task Title -->
+    <TextView
+        android:id="@+id/tasktitleview"
+        style="@style/MyTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Task Title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tasktitlelayout"
+        style="@style/MyTextInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tasktitleview">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tasktitleedittext"
+            style="@style/MyInputText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Write task title..."
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Date and Time -->
+    <TextView
+        android:id="@+id/datetitleview"
+        style="@style/MyTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Date-Time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tasktitlelayout" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/datetimecontainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/datetitleview">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/datelayout"
+            style="@style/MyTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:endIconDrawable="@drawable/calendaricon"
+            app:endIconMode="custom"
+            app:layout_constraintEnd_toStartOf="@id/timelayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/dateedittext"
+                style="@style/MyInputText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="Date"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/timelayout"
+            style="@style/MyTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:endIconDrawable="@drawable/timeicon"
+            app:endIconMode="custom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/datelayout"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/timeedittext"
+                style="@style/MyInputText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="Time" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Location -->
+    <TextView
+        android:id="@+id/locationview"
+        style="@style/MyTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Location"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/datetimecontainer" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/locationlayout"
+        style="@style/MyTextInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:endIconMode="custom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/locationview"
+        app:layout_constraintBottom_toTopOf="@+id/savelocationlayout"
+        >
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/locationedittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/MyInputText"
+            android:inputType="text"
+            android:hint="Enter location"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/savelocationlayout"
+                style="@style/MyTextInputLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/locationlayout"
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/savelocationedittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/MyInputText"
+                    android:visibility="gone"
+                    android:inputType="text"
+                    android:hint="Save this location as "/>
+                >
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+    <!-- Priority -->
+    <TextView
+        android:id="@+id/priorityview"
+        style="@style/MyTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Priority"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/savelocationlayout" />
+
+    <LinearLayout
+        android:id="@+id/prioritycontainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/priorityview" />
+
+    <!-- Reminder -->
+    <TextView
+        android:id="@+id/reminderview"
+        style="@style/MyTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Reminder"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/prioritycontainer" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/reminderlayout"
+        style="@style/MyTextInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:endIconMode="dropdown_menu"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reminderview">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/reminderdropdown"
+            style="@style/MyInputText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Choose reminder"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Category -->
+    <TextView
+        android:id="@+id/categoryview"
+        style="@style/MyTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Category"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reminderlayout" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/categorylayout"
+        style="@style/MyTextInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:endIconMode="dropdown_menu"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/categoryview">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/categorydropdown"
+            style="@style/MyInputText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Choose category"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/repeatview"
+                style="@style/MyTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Repeat"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/categorylayout" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/repeatlayout"
+                style="@style/MyTextInputLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:endIconMode="dropdown_menu"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/repeatview">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/repeatdropdown"
+                    style="@style/MyInputText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Choose category"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- Notes -->
+    <TextView
+        android:id="@+id/notesview"
+        style="@style/MyTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Notes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/repeatlayout" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/noteslayout"
+        style="@style/MyTextInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/notesview">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/noteedittext"
+            style="@style/MyInputText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Write notes..."/>
+    </com.google.android.material.textfield.TextInputLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+    <!-- Submit Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/savetaskbutton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/modern_primary"
+        android:text="Submit"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
+        app:cornerRadius="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

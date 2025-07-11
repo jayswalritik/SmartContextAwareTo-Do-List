@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- res/values/colors.xml -->
+    <resources>
+        <color name="priorityHigh">#E53935</color>     <!-- Red -->
+        <color name="priorityMedium">#FB8C00</color>   <!-- Orange -->
+        <color name="priorityLow">#43A047</color>      <!-- Green -->
+    </resources>
+
+</selector>

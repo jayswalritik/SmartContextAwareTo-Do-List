@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="taskliststrokecolor">#CAC4D0</color>
+    <color name="taskliststbackgroundcolor">@color/white</color>
+    <color name="tasklistitembackground">#FDFFF9</color>
+    <color name="tasklisttextcolor">@color/modern_primary</color>
+    <color name="selectedtaskbackground">#E3F2FD</color> <!-- light blue -->
+
+    <color name="primaryColor">#3366FF</color>
+    <color name="background_light">#FAFAFA</color>
+    <color name="iconColor">#555555</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="modern_primary">#445C9C</color> <!-- Elegant indigo-blue -->
+    <color name ="teal_700">#008080</color>
+    <color name="modern_primary_color">#E53935</color> <!-- example red -->
+    <color name="modern_primary_dark">#B71C1C</color> <!-- darker red -->
+
+    <color name="primary">#6750A4</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="surface">#FFFBFE</color>
+    <color name="on_surface">#1C1B1F</color>
+    <color name="surface_variant">#E7E0EC</color>
+    <color name="on_surface_variant">#49454F</color>
+    <color name="outline_variant">#CAC4D0</color>
+    <color name="surface_container">#F5F5F5</color>
+    <color name="hint_text">@android:color/secondary_text_light_nodisable</color> <!-- Medium grey, change to darker if needed -->
+    <color name="radio_checked_center">#FFFFFF</color>
+    <color name="radio_unchecked_border">#FFFFFF</color>
+    <color name="radio_background">#FFFFFF</color>
+
+    <color name="ratingstarcolor">#757575</color>
+    <color name="taskrecylerviewbackground">@color/white</color>
+
+</resources>

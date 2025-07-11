@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#000000</color>
+    <color name="black">#FFFFFF</color>
+    <color name="outline_variant">#49454F</color>
+    <color name="taskliststrokecolor">#CAC4D0</color>
+    <color name="taskliststbackgroundcolor">#121212</color>
+    <color name="tasklistitembackground">#071208</color>
+    <color name="tasklisttextcolor">@color/black</color>
+    <color name="selectedtaskbackground">#1A2E40</color> <!-- softer dark blue -->
+    <color name="taskrecylerviewbackground">#1C1B1F</color>
+
+</resources>

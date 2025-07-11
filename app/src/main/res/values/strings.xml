@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">SmartTo-Do-List</string>
+    <string name="title_activity_item_detail_host">ItemDetailHostActivity</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
+
+    <string-array name="custom_units">
+        <item>mins</item>
+        <item>hrs</item>
+        <item>days</item>
+        <item>weeks</item>
+        <item>months</item>
+    </string-array>
+
+
+    <string name="details">Task Details</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="location">Location</string>
+    <string name="category">Category</string>
+    <string name="priority">Priority</string>
+    <string name="reminder">Reminder</string>
+    <string name="status">Status</string>
+    <string name="back_button">Go Back</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+</resources>

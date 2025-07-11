@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Save this as: res/color/checkbox_custom_tint.xml -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- When checked: white box with black tick mark -->
+    <item android:state_checked="true" android:color="@android:color/black" />
+    <!-- When unchecked: white outline -->
+    <item android:state_checked="false" android:color="@android:color/white" />
+    <!-- Default: white -->
+    <item android:color="@android:color/white" />
+</selector>

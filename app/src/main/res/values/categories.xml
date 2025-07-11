@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Category list for Spinner -->
+    <string-array name="categories">
+        <item>Work</item>
+        <item>Personal</item>
+        <item>Urgent</item>
+        <item>Health</item>
+        <item>Study</item>
+        <item>Shopping</item>
+        <item>Others</item>
+    </string-array>
+</resources>

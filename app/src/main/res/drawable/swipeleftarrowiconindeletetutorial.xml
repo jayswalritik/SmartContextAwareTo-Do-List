@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="100dp"
+    android:height="24dp"
+    android:viewportWidth="100"
+    android:viewportHeight="24">
+
+    <!-- Long tail line -->
+    <path
+        android:fillColor="@color/teal_700"
+        android:strokeColor="@color/teal_700"
+        android:strokeWidth="3"
+        android:pathData="M50,12 H25" />
+
+    <!-- Arrow head (triangle pointing left) -->
+    <path
+        android:fillColor="@color/teal_700"
+        android:pathData="M25,6 L13,12 L25,18 Z" />
+</vector>

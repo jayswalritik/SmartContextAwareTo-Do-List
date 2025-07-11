@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Reminders list for Spinner -->
+    <string-array name="reminders">
+        <item>Custom</item>
+        <item>30 mins before </item>
+        <item>1 hr before</item>
+        <item>2 hrs before</item>
+        <item>Daily</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+        <item>Yearly</item>
+    </string-array>
+</resources>

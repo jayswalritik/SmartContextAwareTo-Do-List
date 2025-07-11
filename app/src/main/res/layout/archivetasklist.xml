@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
+    app:strokeWidth="2dp"
+    app:strokeColor="@color/taskliststrokecolor"
+    app:cardBackgroundColor="@color/taskliststbackgroundcolor"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <!-- Horizontal layout for content + checkbox -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- Vertical content -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/taskTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Task Title"
+                android:textColor="@color/tasklisttextcolor"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Horizontal layout for created date -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                android:gravity="start">
+
+                <TextView
+                    android:id="@+id/taskcreateddatetextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Created on :"
+                    android:paddingEnd="30dp"
+                    android:textColor="@color/tasklisttextcolor"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    />
+
+                <TextView
+                    android:id="@+id/taskcreateddatetext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="2023-05-01"
+                    android:textColor="@color/tasklisttextcolor"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="20dp"
+                    android:gravity="start"/>
+            </LinearLayout>
+
+            <!-- Horizontal layout for completed date -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                android:gravity="start">
+
+                <TextView
+                    android:id="@+id/taskcompleteddatetextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Completed on :"
+                    android:paddingEnd="13dp"
+                    android:textColor="@color/tasklisttextcolor"
+                    android:textStyle="bold"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/taskcompleteddatetext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2024-05-06"
+                    android:layout_weight="1"
+                    android:layout_marginStart="20dp"
+                    android:textColor="@color/tasklisttextcolor"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:gravity="start"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Checkbox at the end, vertically centered -->
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:title="Home"
+        android:icon="@drawable/homeicon" />
+    <item
+        android:id="@+id/nav_darkmode"
+        android:title="Night/Light Mode"
+        android:icon="@drawable/darkmodeicon" />
+
+    <item
+        android:id="@+id/nav_savedlocations"
+        android:title="Saved Locations"
+        android:icon="@drawable/savedlocationsicon"/>
+    <item
+        android:id="@+id/nav_archive"
+        android:title="Archive"
+        android:icon="@drawable/archiveicon" />
+    <item
+        android:id="@+id/nav_feedback"
+        android:title="Feedback"
+        android:icon="@drawable/feedbackicon" />
+    <item
+        android:id="@+id/nav_tutorial"
+        android:title="Tutorial"
+        android:icon="@drawable/tutorialicon" />
+</menu>

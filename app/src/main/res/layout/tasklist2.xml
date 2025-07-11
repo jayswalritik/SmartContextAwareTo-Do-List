@@ -1,0 +1,144 @@
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="24dp"
+    app:cardElevation="8dp"
+    app:strokeWidth="0dp"
+    app:strokeColor="@color/taskliststrokecolor"
+    app:cardCornerRadius="20dp"
+    app:cardBackgroundColor="@color/taskliststbackgroundcolor"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:paddingEnd="6dp"
+        android:background="@android:color/transparent">
+
+        <View
+            android:id="@+id/prioritydot"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:background="@drawable/priorityindicator"
+            android:layout_marginEnd="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tasktitleview"
+            app:layout_constraintBottom_toBottomOf="@+id/tasktitleview" />
+
+        <!-- Task Title -->
+        <TextView
+            android:id="@+id/tasktitleview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Task Title"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginHorizontal="6dp"
+            android:textColor="@color/tasklisttextcolor"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:layout_constraintStart_toEndOf="@id/prioritydot"
+            app:layout_constraintEnd_toStartOf="@id/checkbox"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Date & Time -->
+        <LinearLayout
+            android:id="@+id/datetimecontainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:paddingVertical="6dp"
+            android:background="@color/tasklistitembackground"
+            android:elevation="1dp"
+            android:alpha="0.9"
+            app:layout_constraintTop_toBottomOf="@id/prioritydot"
+            app:layout_constraintStart_toStartOf="@id/prioritydot"
+            app:layout_constraintEnd_toStartOf="@id/checkbox">
+
+            <TextView
+                android:id="@+id/dateview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="📅 Date"
+                android:textColor="@color/tasklisttextcolor"
+                android:textStyle="bold"
+                android:paddingHorizontal="0dp"
+                android:textSize="13sp"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/timeview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🕐 Time"
+                android:textColor="@color/tasklisttextcolor"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:gravity="start" />
+        </LinearLayout>
+
+        <!-- Location -->
+        <!-- Location and Category Row -->
+        <LinearLayout
+            android:id="@+id/locationCategoryContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:paddingVertical="6dp"
+            android:background="@color/tasklistitembackground"
+            android:elevation="1dp"
+            android:alpha="0.9"
+            app:layout_constraintTop_toBottomOf="@id/datetimecontainer"
+            app:layout_constraintStart_toStartOf="@id/prioritydot"
+            app:layout_constraintEnd_toStartOf="@id/checkbox">
+
+            <TextView
+                android:id="@+id/locationView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="📍 Location"
+                android:textSize="12sp"
+                android:textColor="@color/tasklisttextcolor"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+
+            <TextView
+                android:id="@+id/categoryview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="📋 Category"
+                android:textSize="12sp"
+                android:textColor="@color/tasklisttextcolor"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+        </LinearLayout>
+
+
+        <!-- Checkbox (Vertically Centered Relative to Card) -->
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/datetimecontainer"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
