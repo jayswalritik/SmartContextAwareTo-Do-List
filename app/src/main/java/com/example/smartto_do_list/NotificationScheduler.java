@@ -17,12 +17,14 @@ public class NotificationScheduler {
     public static void scheduleTaskNotification(Context context, Task task) {
         if (task == null) return;
 
+        // ✅ Cancel any existing alarm before scheduling new one
+        cancelTaskNotification(context, task.getId());
+
         if (task.getTime() == null || task.getTime().isEmpty()) {
             // No time set, schedule two notifications at 9:00 and 17:00
             scheduleNotificationAtTime(context, task, 9, 0, 0);   // 09:00 AM
             scheduleNotificationAtTime(context, task, 17, 0, 1);  // 05:00 PM (17:00)
         } else {
-            // Time is set, schedule single notification at task time
             Calendar calendar = getNotificationTime(context, task);
             if (calendar != null) {
                 scheduleAlarm(context, task, calendar, task.getId());
@@ -152,6 +154,8 @@ public class NotificationScheduler {
                 pendingIntent
         );
     }
+
+
 
 
 }

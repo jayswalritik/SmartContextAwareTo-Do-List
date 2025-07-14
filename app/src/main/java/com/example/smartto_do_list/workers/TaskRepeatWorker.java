@@ -42,7 +42,7 @@ public class TaskRepeatWorker extends Worker {
 
         for (Task task : allTasks) {
             long taskTimeMillis = TaskUtils.getNextScheduledTimeMillis(task);
-            if (taskTimeMillis <= now) {
+            if (taskTimeMillis <= now + 1500) {
                 // Due → send notification
                 NotificationScheduler.scheduleTaskNotification(getApplicationContext(), task);
 

@@ -186,6 +186,14 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
+        notificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, NotificationListActivity.class);
+                startActivity(intent);
+            }
+        });
+
         selectAllRadioButton.setOnClickListener(v -> radioButtonAction());
 
         // 🗑 Delete button logic
@@ -247,8 +255,6 @@ public class MainActivity extends AppCompatActivity {
         // ✅ Schedule repeating tasks
         WorkerUtils.scheduleDynamicRepeatWorker(getApplicationContext());
     }
-
-
 
     private void initViews() {
         actionRow = findViewById(R.id.actionrow);

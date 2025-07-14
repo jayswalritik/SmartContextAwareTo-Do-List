@@ -51,7 +51,7 @@ android {
 
 dependencies {
     // OMSDroid
-    implementation("org.osmdroid:osmdroid-android:6.1.10")
+    implementation("org.osmdroid:osmdroid-android:6.1.17")
 
     // Google Play Services Location
     implementation("com.google.android.gms:play-services-location:18.0.0")

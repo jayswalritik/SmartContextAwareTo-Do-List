@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {Task.class, SavedLocations.class, Note.class}, version = 1)
+@Database(entities = {Task.class, SavedLocations.class, Note.class, NotificationLog.class}, version = 2)
 public abstract class TaskDatabase extends RoomDatabase {
 
     private static TaskDatabase instance;
@@ -14,6 +14,8 @@ public abstract class TaskDatabase extends RoomDatabase {
     public abstract TaskDao taskDao();
     public abstract SavedLocationsDao savedLocationDao();
     public abstract NoteDao noteDao();
+
+    public abstract NotificationLogDao notificationLogDao();
 
     public static synchronized TaskDatabase getInstance(Context context) {
         if (instance == null) {

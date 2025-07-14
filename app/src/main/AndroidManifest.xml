@@ -2,10 +2,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.smartto_do_list">
 
-    <!-- Permissions -->
+    <!-- ⚠️ Essential permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -19,15 +22,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartToDoList"
+        android:requestLegacyExternalStorage="true"
         tools:targetApi="33">
 
-        <!-- Activities -->
+        <!-- 🔷 Main launcher activity -->
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 🔷 Other activities -->
         <activity android:name=".SavedLocationsActivity" />
         <activity android:name=".ArchiveTasksActivity" />
         <activity android:name=".FeedbackActivity" />
@@ -36,29 +42,38 @@
         <activity android:name=".TaskDetailsActivity" />
         <activity android:name=".TaskDescription" />
         <activity android:name=".MapActivity" />
+        <activity android:name=".NotificationListActivity" />
 
-        <!-- Boot Receiver -->
+        <!-- 🔔 Receivers -->
+
+        <!-- ✅ Boot and locked boot -->
         <receiver
             android:name=".receivers.BootReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <!-- Notification Broadcast -->
-        <receiver android:name=".TaskNotificationsReceiver" />
+        <!-- ✅ Notification receiver -->
+        <receiver
+            android:name=".TaskNotificationsReceiver"
+            android:exported="true" />
 
-        <!-- Time Change Receiver -->
-        <receiver android:name=".receivers.TimeChangeReceiver" android:exported="true">
+        <!-- ✅ Time change (manual clock/timezone change) -->
+        <receiver
+            android:name=".receivers.TimeChangeReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
         </receiver>
 
-        <!-- FileProvider (if you use file sharing) -->
+        <!-- 📂 File provider for sharing attachments -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -68,6 +83,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-    </application>
 
+    </application>
 </manifest>
