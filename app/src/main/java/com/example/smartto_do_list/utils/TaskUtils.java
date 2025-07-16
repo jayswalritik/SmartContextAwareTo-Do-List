@@ -198,6 +198,7 @@ public class TaskUtils {
             cal.set(Calendar.MILLISECOND, 0);
             return cal.getTimeInMillis();
         } catch (ParseException e) {
+
             return Long.MAX_VALUE;
         }
     }

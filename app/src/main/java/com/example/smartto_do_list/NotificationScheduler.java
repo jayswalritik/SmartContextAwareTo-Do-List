@@ -7,10 +7,13 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
+import com.example.smartto_do_list.utils.TaskUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class NotificationScheduler {
 
@@ -30,6 +33,7 @@ public class NotificationScheduler {
                 scheduleAlarm(context, task, calendar, task.getId());
             }
         }
+        scheduleTaskReminder(context, task); // 🔔 schedule reminder before main notification
     }
 
     private static void scheduleNotificationAtTime(Context context, Task task, int hour, int minute, int suffix) {
@@ -117,19 +121,28 @@ public class NotificationScheduler {
     }
 
     public static void cancelTaskNotification(Context context, int taskId) {
-        Intent intent = new Intent(context, TaskNotificationsReceiver.class);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
+        // Cancel default alarm
+        cancelAlarmWithRequestCode(context, alarmManager, taskId);
+
+        // Cancel possible 9:00 AM and 5:00 PM alarms
+        cancelAlarmWithRequestCode(context, alarmManager, taskId * 10 + 0); // 9:00 AM
+        cancelAlarmWithRequestCode(context, alarmManager, taskId * 10 + 1); // 5:00 PM
+    }
+
+    private static void cancelAlarmWithRequestCode(Context context, AlarmManager alarmManager, int requestCode) {
+        Intent intent = new Intent(context, TaskNotificationsReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context,
-                taskId,
+                requestCode,
                 intent,
                 PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE
         );
 
         if (pendingIntent != null) {
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             alarmManager.cancel(pendingIntent);
-            Log.d("NotificationScheduler", "Cancelled alarm for taskId: " + taskId);
+            Log.d("NotificationScheduler", "Cancelled alarm with requestCode: " + requestCode);
         }
     }
 
@@ -155,7 +168,96 @@ public class NotificationScheduler {
         );
     }
 
+    public static long getReminderOffsetMillis(String reminder) {
+        if (reminder == null || reminder.trim().isEmpty()) return 0;
 
+        reminder = reminder.toLowerCase().replace("custom", "").trim();
+        String[] parts = reminder.split(" ");
 
+        if (parts.length < 2) return 0;
+
+        try {
+            int value = Integer.parseInt(parts[0]);
+            String unit = parts[1];
+
+            switch (unit) {
+                case "min":
+                case "mins":
+                case "minutes":
+                    return TimeUnit.MINUTES.toMillis(value);
+                case "hr":
+                case "hrs":
+                case "hour":
+                case "hours":
+                    return TimeUnit.HOURS.toMillis(value);
+                case "day":
+                case "days":
+                    return TimeUnit.DAYS.toMillis(value);
+                case "week":
+                case "weeks":
+                    return TimeUnit.DAYS.toMillis(value * 7);
+                case "month":
+                case "months":
+                    return TimeUnit.DAYS.toMillis(value * 30); // approx
+                case "year":
+                case "years":
+                    return TimeUnit.DAYS.toMillis(value * 365); // approx
+                default:
+                    return 0;
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+    public static void scheduleTaskReminder(Context context, Task task) {
+        if (task == null || task.getReminder() == null || task.getReminder().isEmpty()) return;
+
+        long scheduledTimeMillis = TaskUtils.getNextScheduledTimeMillis(task);
+        long reminderOffsetMillis = getReminderOffsetMillis(task.getReminder());
+
+        long reminderTimeMillis = scheduledTimeMillis - reminderOffsetMillis;
+        if (reminderTimeMillis <= System.currentTimeMillis()) return; // Too late to remind
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(reminderTimeMillis);
+
+        Intent intent = new Intent(context, TaskNotificationsReceiver.class);
+        intent.putExtra("task_id", task.getId());
+        intent.putExtra("task_title", "[Reminder] " + task.getTitle());
+        intent.putExtra("notification_type", "Reminder"); // ✅ Add this line
+
+        int requestCode = task.getId() + 9999; // Different request code than main
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context,
+                requestCode,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setExact(
+                AlarmManager.RTC_WAKEUP,
+                reminderTimeMillis,
+                pendingIntent
+        );
+    }
+    public static void cancelTaskReminder(Context context, int taskId) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(context, TaskNotificationsReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context,
+                taskId + 5000,  // use same ID as reminder notification
+                intent,
+                PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        if (pendingIntent != null) {
+            alarmManager.cancel(pendingIntent);
+            pendingIntent.cancel();
+        }
+    }
 
 }

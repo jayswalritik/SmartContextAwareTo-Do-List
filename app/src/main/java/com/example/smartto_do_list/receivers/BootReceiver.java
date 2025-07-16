@@ -22,11 +22,9 @@ public class BootReceiver extends BroadcastReceiver {
                 for (Task task : allTasks) {
                     NotificationScheduler.scheduleTaskNotification(context, task);
                 }
-
                 // Schedule repeat worker
                 TaskRepeatWorker.scheduleNextRepeatWorker(context, 1);
             }).start();
         }
     }
-
 }

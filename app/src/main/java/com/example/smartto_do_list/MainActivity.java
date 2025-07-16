@@ -946,6 +946,7 @@ public class MainActivity extends AppCompatActivity {
                 Task taskToDelete = ((TaskAdapter.TaskItem) item).task;
 
                 NotificationScheduler.cancelTaskNotification(MainActivity.this, taskToDelete.getId());
+                NotificationScheduler.cancelTaskReminder(MainActivity.this, taskToDelete.getId()); // ✅ Add this
 
                 // Remove from DB and refresh
                 db.taskDao().delete(taskToDelete);
@@ -957,6 +958,7 @@ public class MainActivity extends AppCompatActivity {
                             db.taskDao().insert(taskToDelete);
                             // Re-schedule notification on undo
                             NotificationScheduler.scheduleTaskNotification(MainActivity.this, taskToDelete);
+                            NotificationScheduler.scheduleTaskReminder(MainActivity.this, taskToDelete);
                             loadTasksForCategory(currentCategory);
                         }).show();
             }
@@ -1021,6 +1023,7 @@ public class MainActivity extends AppCompatActivity {
         // Delete from database
         for (Task task : tasksToDelete) {
             NotificationScheduler.cancelTaskNotification(MainActivity.this, task.getId());
+            NotificationScheduler.cancelTaskReminder(MainActivity.this, task.getId()); // 🔔 Add this
             db.taskDao().delete(task);
         }
 
@@ -1044,6 +1047,7 @@ public class MainActivity extends AppCompatActivity {
                         db.taskDao().insert(task);
                         // Re-schedule notification on undo
                         NotificationScheduler.scheduleTaskNotification(MainActivity.this, task);
+                        NotificationScheduler.scheduleTaskReminder(MainActivity.this, task); // 🔁 Add this
                     }
                     loadTasksForCategory(currentCategory);
                 }).show();
@@ -1063,11 +1067,13 @@ public class MainActivity extends AppCompatActivity {
 
             // ❌ Cancel notification if marked completed
             NotificationScheduler.cancelTaskNotification(MainActivity.this, task.getId());
+            NotificationScheduler.cancelTaskReminder(MainActivity.this, task.getId()); // 🔔 Add this
         } else {
             task.setCompletedDate(null);
 
             // ✅ Reschedule if marked pending again
             NotificationScheduler.scheduleTaskNotification(MainActivity.this, task);
+            NotificationScheduler.scheduleTaskReminder(MainActivity.this, task); // 🔁 Add this
         }
 
         db.taskDao().updateTaskStatusAndCompletedDate(task.getId(), newStatus, completedDate);
@@ -1081,8 +1087,10 @@ public class MainActivity extends AppCompatActivity {
                     // 🔁 Restore notification based on previous status
                     if ("completed".equalsIgnoreCase(previousStatus)) {
                         NotificationScheduler.cancelTaskNotification(MainActivity.this, task.getId());
+                        NotificationScheduler.cancelTaskReminder(MainActivity.this, task.getId()); // 🔔 Add this
                     } else {
                         NotificationScheduler.scheduleTaskNotification(MainActivity.this, task);
+                        NotificationScheduler.scheduleTaskReminder(MainActivity.this, task); // 🔁 Add this
                     }
 
                     loadTasksForCategory(currentCategory);
@@ -1112,6 +1120,7 @@ public class MainActivity extends AppCompatActivity {
 
                         // ❌ Cancel notification
                         NotificationScheduler.cancelTaskNotification(MainActivity.this, task.getId());
+                        NotificationScheduler.cancelTaskReminder(MainActivity.this, task.getId()); // 🔔 Add this
                     }
 
                     // Update DB asynchronously
@@ -1141,8 +1150,10 @@ public class MainActivity extends AppCompatActivity {
                                         if ("pending".equalsIgnoreCase(old.taskStatus)) {
                                             Task restored = db.taskDao().getTaskById(old.id);
                                             NotificationScheduler.scheduleTaskNotification(MainActivity.this, restored);
+                                            NotificationScheduler.scheduleTaskReminder(MainActivity.this, restored);
                                         } else {
                                             NotificationScheduler.cancelTaskNotification(MainActivity.this, old.id);
+                                            NotificationScheduler.cancelTaskReminder(MainActivity.this, old.id); // 🔔 Add this
                                         }
                                     }
                                     runOnUiThread(this::refreshGlobalAllTasksAndReloadUI);

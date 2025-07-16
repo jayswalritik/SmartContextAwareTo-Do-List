@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.smartto_do_list">
 
-    <!-- ⚠️ Essential permissions -->
+    <!-- 🔐 Required Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -13,6 +13,11 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+
 
     <application
         android:name=".MyAppTheme"
@@ -25,15 +30,17 @@
         android:requestLegacyExternalStorage="true"
         tools:targetApi="33">
 
-        <!-- 🔷 Main launcher activity -->
-        <activity android:name=".MainActivity" android:exported="true">
+        <!-- 🚀 Main entry point -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- 🔷 Other activities -->
+        <!-- 📋 Task-related Activities -->
         <activity android:name=".SavedLocationsActivity" />
         <activity android:name=".ArchiveTasksActivity" />
         <activity android:name=".FeedbackActivity" />
@@ -44,9 +51,15 @@
         <activity android:name=".MapActivity" />
         <activity android:name=".NotificationListActivity" />
 
-        <!-- 🔔 Receivers -->
+        <!-- 🔔 Notification Dialog (Snooze Options) -->
+        <activity
+            android:name=".SnoozeOptionsActivity"
+            android:theme="@style/Theme.AppCompat.Dialog"
+            android:exported="false"
+            android:launchMode="singleTop" />
 
-        <!-- ✅ Boot and locked boot -->
+
+        <!-- 📡 Boot Receiver -->
         <receiver
             android:name=".receivers.BootReceiver"
             android:enabled="true"
@@ -57,12 +70,7 @@
             </intent-filter>
         </receiver>
 
-        <!-- ✅ Notification receiver -->
-        <receiver
-            android:name=".TaskNotificationsReceiver"
-            android:exported="true" />
-
-        <!-- ✅ Time change (manual clock/timezone change) -->
+        <!-- 🔃 Time Change Receiver -->
         <receiver
             android:name=".receivers.TimeChangeReceiver"
             android:enabled="true"
@@ -73,7 +81,17 @@
             </intent-filter>
         </receiver>
 
-        <!-- 📂 File provider for sharing attachments -->
+        <!-- 📬 Task Notification Receiver -->
+        <receiver
+            android:name=".TaskNotificationsReceiver"
+            android:exported="true" />
+
+        <!-- ✅ Mark Complete / Snooze Action Handler -->
+        <receiver
+            android:name=".receivers.NotificationActionReceiver"
+            android:exported="true" />
+
+        <!-- 📂 File Provider (for any sharing or attachments) -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

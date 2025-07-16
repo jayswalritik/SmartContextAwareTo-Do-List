@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class WorkerUtils {
-
     public static void scheduleDynamicRepeatWorker(Context context) {
         TaskDatabase db = TaskDatabase.getInstance(context);
 

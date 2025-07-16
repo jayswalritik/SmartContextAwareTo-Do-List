@@ -127,4 +127,12 @@ public interface TaskDao {
     @Query("UPDATE tasks SET date = :newDate, time = :newTime WHERE id = :taskId")
     void updateTaskDateTime(int taskId, String newDate, String newTime);
 
+    @Transaction
+    @Query("SELECT * FROM tasks WHERE location_id > 0 AND LOWER(task_status) != 'completed'")
+    List<TaskRelationWithSavedLocationsAndNote> getActiveLocationTaskRelations();
+
+    @Query("UPDATE tasks SET task_status = 'notified' WHERE id = :taskId")
+    void markLocationNotified(int taskId);
+
+
 }
