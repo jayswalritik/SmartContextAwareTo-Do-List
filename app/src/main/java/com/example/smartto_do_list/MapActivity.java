@@ -7,8 +7,10 @@ import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -154,12 +156,17 @@ public class MapActivity extends AppCompatActivity {
 
     private void requestPermissionsIfNecessary() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
+                    new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                    }, REQUEST_PERMISSIONS_REQUEST_CODE);
         } else {
-            enableUserLocation();
+            enableUserLocation(); // Only foreground permission is enough for now
         }
     }
 
@@ -168,18 +175,59 @@ public class MapActivity extends AppCompatActivity {
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
-            boolean allGranted = true;
-            for (int result : grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED) {
-                    allGranted = false;
-                    break;
+            boolean fineGranted = false;
+            boolean coarseGranted = false;
+
+            for (int i = 0; i < permissions.length; i++) {
+                if (permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    fineGranted = grantResults[i] == PackageManager.PERMISSION_GRANTED;
+                }
+                if (permissions[i].equals(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    coarseGranted = grantResults[i] == PackageManager.PERMISSION_GRANTED;
                 }
             }
-            if (allGranted) enableUserLocation();
-            else Snackbar.make(mapView, "Location permission denied", Snackbar.LENGTH_SHORT).show();
+
+            if (fineGranted || coarseGranted) {
+                enableUserLocation(); // Permission granted, enable location
+            } else {
+                // Check if permanently denied
+                boolean permanentlyDenied = false;
+                for (String permission : permissions) {
+                    if (isPermissionPermanentlyDenied(permission)) {
+                        permanentlyDenied = true;
+                        break;
+                    }
+                }
+
+                if (permanentlyDenied) {
+                    showPermissionPermanentlyDeniedDialog();
+                } else {
+                    Snackbar.make(mapView, "Location permission denied", Snackbar.LENGTH_SHORT).show();
+                }
+            }
         }
     }
+
+    private boolean isPermissionPermanentlyDenied(String permission) {
+        return !ActivityCompat.shouldShowRequestPermissionRationale(this, permission)
+                && ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void showPermissionPermanentlyDeniedDialog() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Permission Required")
+                .setMessage(
+                        "Location permission has been permanently denied.\n\n" +
+                                "To enable it, please follow these steps:\n\n" +
+                                "Settings > Permissions > Location > Allow all the time\n"
+                )
+                .setPositiveButton("Open Settings", (dialog, which) -> openAppPermissionSettings())
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
 
 
     private void setupLongPressToDropPin() {
@@ -285,16 +333,64 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void handleLocationSelection() {
+        handleLocationSelection(false);
+    }
+
+    private void handleLocationSelection(boolean skipBackgroundPermissionDialog) {
         if (currentMarker == null || currentMarker.getPosition() == null) {
             Snackbar.make(mapView, "Please select a location first", Snackbar.LENGTH_SHORT).show();
             return;
         }
 
+        if (!skipBackgroundPermissionDialog
+                && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            showBackgroundPermissionDialog();
+            return; // Stop here until permission is handled
+        }
+
+        // Proceed to send location result and finish
+        sendLocationResultAndFinish();
+    }
+
+    private void showBackgroundPermissionDialog() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Background Location Access")
+                .setMessage(
+                        "To get location alerts when the app is closed, please allow \"All the time\" access:\n\n" +
+                                "Settings > Permissions > Location > Allow all the time\n\n" +
+                                "Your location is stored only on your device and never shared."
+                )
+                .setPositiveButton("Open Settings", (dialog, which) -> openAppPermissionSettings())
+                .setNegativeButton("Cancel", (dialog, which) -> showWarningDialog())
+                .show();
+    }
+
+    private void showWarningDialog() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Warning")
+                .setMessage("Location notifications may not work properly without background location access.")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton("OK", (dialog, which) -> {
+                    // After warning dialog dismissed, proceed with location selection skipping background permission dialog
+                    handleLocationSelection(true);
+                })
+                .show();
+    }
+
+    private void openAppPermissionSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivity(intent);
+    }
+
+    private void sendLocationResultAndFinish() {
         GeoPoint point = currentMarker.getPosition();
         String locationName = tvLocationName.getText().toString();
 
         Intent resultIntent = new Intent();
-
         resultIntent.putExtra("selected_lat", point.getLatitude());
         resultIntent.putExtra("selected_lon", point.getLongitude());
         resultIntent.putExtra("selected_name", locationName);
@@ -302,6 +398,8 @@ public class MapActivity extends AppCompatActivity {
         setResult(RESULT_OK, resultIntent);
         finish();
     }
+
+
 
     private void setupSearchInput() {
         searchInput.setOnEditorActionListener((v, actionId, event) -> {
@@ -383,4 +481,21 @@ public class MapActivity extends AppCompatActivity {
         btnSelectLocation.setVisibility(View.GONE);
         resetFabPosition();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Configuration.getInstance().load(getApplicationContext(),
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
+
+        // Check permissions again after returning from settings
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            if (locationOverlay == null) {
+                enableUserLocation();  // Only re-enable if not already enabled
+            }
+        }
+    }
+
 }

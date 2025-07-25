@@ -18,6 +18,12 @@ public class SavedLocations {
     @ColumnInfo(name = "longitude")
     public double longitude;
 
+    // Getters
     public int getId() { return id; }
+
     public String getLabel() { return label; }
+
+    public double getLatitude() { return latitude; }
+
+    public double getLongitude() { return longitude; }
 }

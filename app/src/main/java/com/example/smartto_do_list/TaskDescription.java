@@ -1,5 +1,7 @@
 package com.example.smartto_do_list;
-import android.graphics.Color;
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.text.InputType;
@@ -30,6 +32,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 
@@ -38,7 +41,7 @@ import java.util.List;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.example.smartto_do_list.utils.WorkerUtils;
+import com.example.smartto_do_list.utils.GeofenceHelper;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -1277,18 +1280,46 @@ public class TaskDescription extends AppCompatActivity {
     }
 
 
-    // Saves a task in the background thread
+    // Saves a task in the background thread and registers geofence if location exists
     private void saveTask(TaskDao taskDao, Task task) {
         new Thread(() -> {
+            Context context = TaskDescription.this;
+            TaskDatabase db = TaskDatabase.getInstance(context);
+
+            // Insert or update the task
             if (isEditMode) {
                 task.id = editingTaskId;
                 taskDao.update(task);
             } else {
-                taskDao.insert(task);
+                long insertedId = taskDao.insert(task);
+                task.id = (int) insertedId;  // Cast long to int safely
             }
 
-            NotificationScheduler.scheduleTaskNotification(TaskDescription.this, task);
+            // Register geofence if task has a valid location
+            if (task.locationId != -1) {
+                SavedLocationsDao locationsDao = db.savedLocationDao();
+                SavedLocations loc = locationsDao.getLocationById(task.locationId);
 
+                if (loc != null) {
+                    runOnUiThread(() -> {
+                        // ✅ Step-by-Step Fix: Check for location permissions before registering geofence
+                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+                            GeofenceHelper geofenceHelper = new GeofenceHelper(this);
+                            geofenceHelper.registerGeofenceForTask(task, loc);
+
+                        } else {
+                            Toast.makeText(this, "Location permission missing — can't set geofence", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            // Schedule time-based notification
+            NotificationScheduler.scheduleTaskNotification(context, task);
+
+            // UI updates after saving
             runOnUiThread(() -> {
                 locationEditText.setEnabled(true);
                 locationEditText.setText("");
@@ -1302,6 +1333,8 @@ public class TaskDescription extends AppCompatActivity {
             });
         }).start();
     }
+
+
 
     // Auto-generates a label for unnamed location and saves task
     private void saveTaskWithUnnamedLocation(TaskDao taskDao, SavedLocationsDao savedLocationsDao,

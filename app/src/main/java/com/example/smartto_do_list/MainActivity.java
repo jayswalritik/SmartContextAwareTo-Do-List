@@ -16,10 +16,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
@@ -55,6 +57,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.smartto_do_list.services.MotionDetectionService;
 import com.example.smartto_do_list.utils.WorkerUtils;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.material.chip.ChipGroup;
@@ -134,8 +137,12 @@ public class MainActivity extends AppCompatActivity {
 
         // 🔔 Ask for notification permission on Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
+            boolean warningDismissed = prefs.getBoolean("notification_warning_dismissed", false);
+
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
+                    != PackageManager.PERMISSION_GRANTED && !warningDismissed) {
+
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.POST_NOTIFICATIONS},
                         1001);
@@ -186,17 +193,13 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        notificationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, NotificationListActivity.class);
-                startActivity(intent);
-            }
+        notificationButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, NotificationListActivity.class);
+            startActivity(intent);
         });
 
         selectAllRadioButton.setOnClickListener(v -> radioButtonAction());
 
-        // 🗑 Delete button logic
         deleteAllButton.setOnClickListener(v -> {
             Set<Integer> selectedIds = adapter.getSelectedTaskIds();
             List<Task> selectedTasks = new ArrayList<>();
@@ -254,7 +257,67 @@ public class MainActivity extends AppCompatActivity {
 
         // ✅ Schedule repeating tasks
         WorkerUtils.scheduleDynamicRepeatWorker(getApplicationContext());
+
+        // 📍 Request location permissions if necessary
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                        },
+                        1002);
+            }
+        }
+
+        // 🛰️ Start motion detection service
+        Intent serviceIntent = new Intent(this, MotionDetectionService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ContextCompat.startForegroundService(this, serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 1001) {
+            if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                // Show warning only if user denied
+                showNotificationPermissionWarning();
+            }
+        }
+    }
+    private void showNotificationPermissionWarning() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Notifications Disabled")
+                .setMessage("This app won't be able to send you task reminders unless you allow notification permission.\n\n" +
+                        "To enable it manually:\n" +
+                        "1. Open Settings\n" +
+                        "2. Tap 'Notifications'\n" +
+                        "3. Enable permission for this app.")
+                .setCancelable(false)
+                .setPositiveButton("OK", (dialog, which) -> {
+                    // Save flag so dialog doesn’t keep showing
+                    getSharedPreferences("app_prefs", MODE_PRIVATE)
+                            .edit()
+                            .putBoolean("notification_warning_dismissed", true)
+                            .apply();
+                })
+                .setNegativeButton("Open Settings", (dialog, which) -> {
+                    // Open app settings
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                })
+                .show();
+    }
+
 
     private void initViews() {
         actionRow = findViewById(R.id.actionrow);

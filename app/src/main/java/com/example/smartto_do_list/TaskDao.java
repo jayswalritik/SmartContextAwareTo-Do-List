@@ -14,7 +14,7 @@ import java.util.List;
 public interface TaskDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Task task);
+    long insert(Task task);
 
     @Update
     void update(Task task);
@@ -131,8 +131,15 @@ public interface TaskDao {
     @Query("SELECT * FROM tasks WHERE location_id > 0 AND LOWER(task_status) != 'completed'")
     List<TaskRelationWithSavedLocationsAndNote> getActiveLocationTaskRelations();
 
-    @Query("UPDATE tasks SET task_status = 'notified' WHERE id = :taskId")
-    void markLocationNotified(int taskId);
+    @Query("SELECT COUNT(*) FROM tasks WHERE date = :today AND location_id!=-1 AND LOWER(task_status) != 'completed'")
+    int getCountOfLocationTasksForToday(String today);
+
+    @Query("SELECT * FROM saved_locations WHERE id = :locationId LIMIT 1")
+    SavedLocations getSavedLocationById(int locationId);
+
+    @Query("SELECT * FROM tasks WHERE location_id > 0 AND date = :date AND LOWER(task_status) != 'completed'")
+    List<Task> getTasksWithLocationAndDate(String date);
+
 
 
 }
