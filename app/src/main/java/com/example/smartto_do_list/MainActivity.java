@@ -1,8 +1,6 @@
 package com.example.smartto_do_list;
 
 import android.Manifest;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -73,7 +71,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-// Make sure this is imported
 import com.getkeepsafe.taptargetview.TapTarget;
 
 import com.example.smartto_do_list.utils.TaskUtils;
@@ -210,7 +207,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (selectedTasks.isEmpty()) {
-                Toast.makeText(this, "No tasks selected", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -237,7 +233,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (selectedTasks.isEmpty()) {
-                Toast.makeText(this, "No tasks selected", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -512,8 +507,27 @@ public class MainActivity extends AppCompatActivity {
                     if (isOverdue) filteredByStatus.add(task);
                     break;
                 case "completed":
-                    if ("completed".equals(taskStatus)) filteredByStatus.add(task);
+                    if ("completed".equals(taskStatus)) {
+                        String completedDateStr = task.getCompletedDate(); // Ensure you store this date in the task object
+                        if (completedDateStr != null && !completedDateStr.isEmpty()) {
+                            try {
+                                Date completedDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(completedDateStr);
+                                if (completedDate != null) {
+                                    long days = (new Date().getTime() - completedDate.getTime()) / (1000 * 60 * 60 * 24);
+                                    if (days <= 30) {
+                                        filteredByStatus.add(task); // ✅ only include if <= 30 days old
+                                    }
+                                }
+                            } catch (ParseException e) {
+                                // If date parsing fails, optionally include or exclude
+                                filteredByStatus.add(task); // or skip if you prefer
+                            }
+                        } else {
+                            filteredByStatus.add(task); // if no date, you can default to showing it
+                        }
+                    }
                     break;
+
             }
         }
 
@@ -963,8 +977,6 @@ public class MainActivity extends AppCompatActivity {
                 if (pendingTab != null) {
                     pendingTab.select();
                 }
-
-                Toast.makeText(this, "Selected: " + category, Toast.LENGTH_SHORT).show();
             });
 
             categoryButtons.add(btn);
@@ -1388,11 +1400,9 @@ public class MainActivity extends AppCompatActivity {
         if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             editor.putInt("night_mode", AppCompatDelegate.MODE_NIGHT_NO);
-            Toast.makeText(this, "Switched to Light Mode", Toast.LENGTH_SHORT).show();
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             editor.putInt("night_mode", AppCompatDelegate.MODE_NIGHT_YES);
-            Toast.makeText(this, "Switched to Dark Mode", Toast.LENGTH_SHORT).show();
         }
 
         editor.apply();

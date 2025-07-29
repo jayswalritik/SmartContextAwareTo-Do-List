@@ -44,10 +44,10 @@ public class MotionDetectionService extends Service implements SensorEventListen
     private double baseAcceleration = -1;
     private double lowerBound;
     private double upperBound;
-    private static final double MIN_BUFFER = 0.5;
+    private static final double MIN_BUFFER = 0.3;
 
-    private static final double REST_ACCEL_THRESHOLD = 0.5;
-    private static final double SMOOTH_MOTION_THRESHOLD = 1.5;
+    private static final double REST_ACCEL_THRESHOLD = 0.3;
+    private static final double SMOOTH_MOTION_THRESHOLD = 1;
     private static final double JERK_THRESHOLD = 10.0;
 
     private boolean wasIdle = true;
@@ -60,11 +60,11 @@ public class MotionDetectionService extends Service implements SensorEventListen
 
     private long motionStartTime = 0;
     private long restStartTime = 0;
-    private static final long MOTION_CONFIRMATION_MS = 5000;
-    private static final long REST_CONFIRMATION_MS = 2000;
+    private static final long MOTION_CONFIRMATION_MS = 2000;
+    private static final long REST_CONFIRMATION_MS = 5000;
 
     private long bufferBreachStartTime = 0;
-    private static final long BASE_UPDATE_DELAY_MS = 3000; // 3 seconds delay
+    private static final long BASE_UPDATE_DELAY_MS = 0; // 3 seconds delay
 
     private static final float ACCELERATION_THRESHOLD = 2.5f; // example threshold
     private static final long GPS_START_DELAY_MS = 2000; // 2 seconds
@@ -173,7 +173,7 @@ public class MotionDetectionService extends Service implements SensorEventListen
 
         // --- Motion Detection ---
         if (smoothedAccel >= REST_ACCEL_THRESHOLD) {
-            Log.d(TAG, "Smoothed acceleration: " + String.format("%.2f", smoothedAccel));
+            //Log.d(TAG, "Smoothed acceleration: " + String.format("%.2f", smoothedAccel));
 
             if (motionStartTime == 0) {
                 motionStartTime = System.currentTimeMillis();
@@ -211,13 +211,13 @@ public class MotionDetectionService extends Service implements SensorEventListen
         if (accelOutsideBuffer) {
             if (accelerationAboveThresholdStartTime == -1) {
                 accelerationAboveThresholdStartTime = System.currentTimeMillis();
-                Log.d(TAG, "Acceleration breach detected. Starting 2-second timer.");
+                //Log.d(TAG, "Acceleration breach detected. Starting 2-second timer.");
             } else {
                 long duration = System.currentTimeMillis() - accelerationAboveThresholdStartTime;
                 if (duration >= GPS_START_DELAY_MS && gpsTracker != null && !gpsTracker.isTracking()) {
                     gpsTracker.startTracking();
                     gpsTrackingStarted = true;
-                    Log.d(TAG, "Acceleration sustained beyond buffer for 2 seconds. GPS started.");
+                    //Log.d(TAG, "Acceleration sustained beyond buffer for 2 seconds. GPS started.");
 
                     // Optionally update base acceleration
                     setBufferAndBase(smoothedAccel);
@@ -229,7 +229,7 @@ public class MotionDetectionService extends Service implements SensorEventListen
                         String type = smoothedAccel >= JERK_THRESHOLD ? "sudden jerk"
                                 : smoothedAccel >= SMOOTH_MOTION_THRESHOLD ? "smooth motion"
                                 : "minor movement";
-                        showMotionNotification(type, smoothedAccel);
+                        //showMotionNotification(type, smoothedAccel);
 
                         if (gpsTracker != null) {
                             gpsTracker.onMotionDetected();
@@ -239,7 +239,7 @@ public class MotionDetectionService extends Service implements SensorEventListen
             }
         } else {
             if (accelerationAboveThresholdStartTime != -1) {
-                Log.d(TAG, "Acceleration back within buffer. Timer reset.");
+                //Log.d(TAG, "Acceleration back within buffer. Timer reset.");
             }
             accelerationAboveThresholdStartTime = -1;
         }
@@ -251,7 +251,7 @@ public class MotionDetectionService extends Service implements SensorEventListen
             hasFirstMotionBeenHandled = true;
             motionDetectionAllowed = true;
 
-            showMotionNotification("Step detected after idle", -1);
+            //showMotionNotification("Step detected after idle", -1);
 
             if (gpsTracker != null && !gpsTracker.isTracking()) {
                 gpsTracker.startTracking();
@@ -264,7 +264,7 @@ public class MotionDetectionService extends Service implements SensorEventListen
         long now = System.currentTimeMillis();
         if (now - lastMotionTimestamp >= COOLDOWN_MS) {
             lastMotionTimestamp = now;
-            showMotionNotification("Walking (step detected)", -1);
+            //showMotionNotification("Walking (step detected)", -1);
 
             if (gpsTracker != null) {
                 gpsTracker.onMotionDetected();
@@ -275,7 +275,7 @@ public class MotionDetectionService extends Service implements SensorEventListen
 
     private void setBufferAndBase(double newBase) {
         baseAcceleration = newBase;
-        double buffer = Math.max(newBase / 3.0, MIN_BUFFER);
+        double buffer = Math.max(newBase / 5.0, MIN_BUFFER);
         lowerBound = baseAcceleration - buffer;
         upperBound = baseAcceleration + buffer;
         Log.d(TAG, "Buffer and base set: base=" + String.format("%.2f", baseAcceleration)

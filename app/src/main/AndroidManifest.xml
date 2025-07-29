@@ -98,6 +98,10 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".receivers.GPSWakeupReceiver"
+            android:exported="true" />
+
+
         <!-- 📂 File Provider (for any sharing or attachments) -->
         <provider
             android:name="androidx.core.content.FileProvider"

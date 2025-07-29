@@ -75,4 +75,9 @@ public class Task {
         return repeat;
     }
 
+    public void setRepeat(String repeat) {
+        this.repeat = repeat;
+    }
+
+
 }

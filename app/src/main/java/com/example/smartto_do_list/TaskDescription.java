@@ -344,8 +344,6 @@ public class TaskDescription extends AppCompatActivity {
 
             saveLocationLayout.setVisibility(View.VISIBLE); // In case its parent is hidden
 
-            Toast.makeText(this, "Label selected location.", Toast.LENGTH_LONG).show();
-
             if (manualLabelInput.getTag() == null) {
                 manualLabelInput.addTextChangedListener(new TextWatcher() {
                     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -582,7 +580,6 @@ public class TaskDescription extends AppCompatActivity {
 
                         selectedDateString = formattedDate;
                         dateEditText.setText(formattedDate);
-                        Toast.makeText(TaskDescription.this, "Selected Date: " + formattedDate, Toast.LENGTH_SHORT).show();
 
                         // 🔥 Revalidate time after date change
                         isValidTimeInput(timeEditText, 10, isEditMode);
@@ -942,7 +939,6 @@ public class TaskDescription extends AppCompatActivity {
                 preserveTimeError(timeEditText);
                 selectedPriority = priority;
                 highlightPriority();
-                Toast.makeText(this, "Priority set to: " + priority, Toast.LENGTH_SHORT).show();
             });
         }
 
